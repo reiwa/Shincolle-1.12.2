@@ -1,1 +1,1 @@
-This is unofficial version of Shincolle.
+This is an unofficial version of Shincolle.
