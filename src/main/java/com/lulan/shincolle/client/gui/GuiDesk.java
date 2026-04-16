@@ -541,11 +541,18 @@ public class GuiDesk extends GuiContainer {
                 break;
             default:
                 if(btn >= 5 && btn <= 20) {
-                    this.shipModel.setStateEmotion(0, this.shipModel.getStateEmotion(0) ^ Values.N.Pow2[btn - 5], false);
+                    int bitIndex = mapModelStatButtonToBitIndex(btn - 5);
+                    this.shipModel.setStateEmotion(0, this.shipModel.getStateEmotion(0) ^ Values.N.Pow2[bitIndex], false);
                     if (this.shipModel.hasShipMounts()) this.setShipMount();
                 }
                 break;
         }
+    }
+
+    private int mapModelStatButtonToBitIndex(int clickIndex) {
+        int col = clickIndex / 2;
+        int row = clickIndex % 2;
+        return row * 8 + col;
     }
 
     private void handleBookNavigation(int btn, int mouseKey) {
