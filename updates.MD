@@ -1,3 +1,7 @@
+## v0.9.2 (2026/04/20 JST)
+- Fixed an issue where tooltips were not displayed in the GUI
+- Fixed an issue where item slots were not expanded when equipping EquipDrum
+
 ## v0.9.1 (2026/04/16 JST)
 - Fixed UI issues
 

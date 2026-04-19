@@ -550,6 +550,7 @@ public class GuiShipInventory extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float f) {
         super.drawScreen(mouseX, mouseY, f);
+        this.renderHoveredToolTip(mouseX, mouseY);
         this.xMouse = mouseX;
         this.yMouse = mouseY;
     }

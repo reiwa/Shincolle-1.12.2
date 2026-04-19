@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.*;
+import com.lulan.shincolle.capability.CapaShipInventory;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -57,6 +58,10 @@ public class EquipCalc {
             for (int i = 0; i < 6; ++i) {
                 EquipCalc.calcEquipAttrs(ship, stackGetter.apply(i));
             }
+        }
+        int maxPages = CapaShipInventory.SLOT_PAGES - 1;
+        if (ship.getStateMinor(36) > maxPages) {
+            ship.setStateMinor(36, maxPages);
         }
         float[] equip = attrs.getAttrsEquip();
         equip[0] *= ConfigHandler.scaleShip[0];
@@ -132,7 +137,7 @@ public class EquipCalc {
     public static int[] getEquipAttrsMisc(ItemStack stack) {
         if (!stack.isEmpty() && stack.getItem() instanceof BasicEquip) {
             int[] itemStat = new int[]{0, 0, 0, 0};
-            Enums.EnumEquipEffectSP effect = ((BasicEquip) stack.getItem()).getSpecialEffect();
+            Enums.EnumEquipEffectSP effect = ((BasicEquip) stack.getItem()).getSpecialEffect(stack);
             switch (effect) {
                 case DRUM:
                 case DRUM_LIQUID:

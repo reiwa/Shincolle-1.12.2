@@ -44,6 +44,7 @@ public class GuiLargeShipyard extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float f) {
         super.drawScreen(mouseX, mouseY, f);
+        this.renderHoveredToolTip(mouseX, mouseY);
         this.xMouse = mouseX;
         this.yMouse = mouseY;
         this.tickGUI += 0.125f;

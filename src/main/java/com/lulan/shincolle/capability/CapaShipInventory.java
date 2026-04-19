@@ -29,14 +29,15 @@ public class CapaShipInventory extends CapaInventory<BasicEntityShip> implements
     }
 
     public int getInventoryPage() {
-        return inventoryPage;
+        return Math.min(inventoryPage, getAvailablePageCount());
     }
 
     public void setInventoryPage(int page) {
-        if (page < 0 || page >= SLOT_PAGES) {
+        int maxPage = getAvailablePageCount();
+        if (page < 0) {
             inventoryPage = 0;
         } else {
-            inventoryPage = page;
+            inventoryPage = Math.min(page, maxPage);
         }
         host.sendSyncPacketGUI();
     }
@@ -63,8 +64,7 @@ public class CapaShipInventory extends CapaInventory<BasicEntityShip> implements
 
     public int getSizeInventoryPaged() {
         if (host != null) {
-            int level = host.getStateMinor(36);
-            return BASE_SIZE + level * PER_LEVEL_SIZE;
+            return BASE_SIZE + getAvailablePageCount() * PER_LEVEL_SIZE;
         }
         return BASE_SIZE;
     }
@@ -158,12 +158,12 @@ public class CapaShipInventory extends CapaInventory<BasicEntityShip> implements
     }
 
     public boolean isSlotAvailable(int slotId) {
-        int pages = host.getInventoryPageSize();
-        if (pages < 2) {
-            if (slotId >= 42) {
-                return false;
-            }
-            return pages >= 1 || slotId < BASE_SIZE;
+        int pages = getAvailablePageCount();
+        if (pages == 0) {
+            return slotId < BASE_SIZE;
+        }
+        if (pages == 1) {
+            return slotId < BASE_SIZE + PER_LEVEL_SIZE;
         }
         return true;
     }
@@ -272,6 +272,20 @@ public class CapaShipInventory extends CapaInventory<BasicEntityShip> implements
     private void recalcAttributesIfNeeded(int index) {
         if (!host.world.isRemote && index < ATTRIBUTE_CALC_THRESHOLD) {
             host.calcShipAttributes(2, true);
+            if (inventoryPage > getAvailablePageCount()) {
+                setInventoryPage(getAvailablePageCount());
+            }
         }
+    }
+
+    private int getAvailablePageCount() {
+        if (host == null) {
+            return 0;
+        }
+        int pages = host.getInventoryPageSize();
+        if (pages < 0) {
+            return 0;
+        }
+        return Math.min(pages, SLOT_PAGES - 1);
     }
 }

@@ -50,6 +50,7 @@ public class EquipDrum
         return 3;
     }
 
+    @Override
     public Enums.EnumEquipEffectSP getSpecialEffect(ItemStack stack) {
         int meta = stack.getItemDamage();
         switch (meta) {

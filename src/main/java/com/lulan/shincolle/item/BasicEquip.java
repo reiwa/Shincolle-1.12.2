@@ -45,6 +45,10 @@ implements IShipResourceItem {
         return Enums.EnumEquipEffectSP.NONE;
     }
 
+    public Enums.EnumEquipEffectSP getSpecialEffect(ItemStack stack) {
+        return this.getSpecialEffect();
+    }
+
     public int getItemEnchantability(ItemStack stack) {
         return 9;
     }
