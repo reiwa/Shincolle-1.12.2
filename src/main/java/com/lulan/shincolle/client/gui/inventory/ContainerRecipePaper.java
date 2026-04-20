@@ -93,27 +93,38 @@ extends Container {
     public void updateProgressBar(int id, int value) {
     }
 
+    @Override
     public ItemStack slotClick(int id, int key, ClickType type, EntityPlayer player) {
         ItemStack itemstack = player.inventory.getItemStack();
+
         if (id >= 0 && id < 9) {
             Slot slot = this.inventorySlots.get(id);
+
             if (!itemstack.isEmpty()) {
-                if (key == 1) {
+                if (type == ClickType.PICKUP && key == 1) {
                     slot.putStack(ItemStack.EMPTY);
-                } else {
+                }
+                else if ((type == ClickType.PICKUP && key == 0) ||
+                        (type == ClickType.QUICK_CRAFT && (key == 1 || key == 5 || key == 9))) {
                     ItemStack itemstack2 = itemstack.copy();
                     itemstack2.setCount(1);
                     slot.putStack(itemstack2);
                 }
             } else {
-                slot.putStack(ItemStack.EMPTY);
+                if (type == ClickType.PICKUP || (type == ClickType.QUICK_CRAFT && (key == 1 || key == 5 || key == 9))) {
+                    slot.putStack(ItemStack.EMPTY);
+                }
             }
+
             this.detectAndSendChanges();
-            return ItemStack.EMPTY;
+
+            return player.inventory.getItemStack();
         }
+
         if (id == 9) {
             return ItemStack.EMPTY;
         }
+
         return super.slotClick(id, key, type, player);
     }
 }

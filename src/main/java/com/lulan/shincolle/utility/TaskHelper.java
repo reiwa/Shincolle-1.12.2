@@ -232,6 +232,9 @@ public class TaskHelper {
         if (host.fishHook == null || host.fishHook.isDead) {
             host.swingArm(EnumHand.MAIN_HAND);
             EntityShipFishingHook hook = new EntityShipFishingHook(host.world, host);
+            hook.setPosition(liquidPos.getX() + 0.1D + host.getRNG().nextDouble() * 0.8D,
+                    liquidPos.getY() + 1D,
+                    liquidPos.getZ() + 0.1D + host.getRNG().nextDouble() * 0.8D);
             host.world.spawnEntity(hook);
             host.fishHook = hook;
             host.applyParticleEmotion(host.getRNG().nextInt(4) + 1);

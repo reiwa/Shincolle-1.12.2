@@ -40,19 +40,22 @@ public class RecipePaper
         NBTTagList tagList;
         super.addInformation(stack, worldIn, tooltip, flagIn);
         if (stack.hasTagCompound() && (tagList = (stack.getTagCompound()).getTagList("Recipe", 10)) != null && tagList.tagCount() > 0) {
-            int i;
             ItemStack[] stacks = new ItemStack[10];
-            for (i = 0; i < tagList.tagCount(); ++i) {
+            for (int i = 0; i < 10; i++) {
+                stacks[i] = ItemStack.EMPTY;
+            }
+
+            for (int i = 0; i < tagList.tagCount(); ++i) {
                 NBTTagCompound itemTags = tagList.getCompoundTagAt(i);
                 int slot = itemTags.getInteger("Slot");
                 if (slot < 0 || slot >= 10) continue;
                 stacks[slot] = new ItemStack(itemTags);
             }
-            if (stacks[9].isEmpty()) {
+            if (!stacks[9].isEmpty()) {
                 tooltip.add(TextFormatting.YELLOW + I18n.format("gui.shincolle:recipepaper.result") + " " + TextFormatting.WHITE + stacks[9].getDisplayName());
             }
             tooltip.add(TextFormatting.AQUA + I18n.format("gui.shincolle:recipepaper.material"));
-            for (i = 0; i < 9; ++i) {
+            for (int i = 0; i < 9; ++i) {
                 if (stacks[i] == null || stacks[i].isEmpty()) continue;
                 tooltip.add(TextFormatting.GRAY + "  " + stacks[i].getDisplayName());
             }

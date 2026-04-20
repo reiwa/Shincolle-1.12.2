@@ -18,6 +18,12 @@ extends GuiContainer {
         this.ySize = 166;
     }
 
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float f) {
+        super.drawScreen(mouseX, mouseY, f);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
     protected void drawGuiContainerForegroundLayer(int i, int j) {
     }
 
