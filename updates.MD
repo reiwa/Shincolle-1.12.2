@@ -1,4 +1,4 @@
-## v0.9.4 (2026/04/28 JST)
+## v0.9.4 (2026/04/27 JST)
 - Improved movement stability when mounted on a Mount entity
 
 ## v0.9.3 (2026/04/20 JST)
