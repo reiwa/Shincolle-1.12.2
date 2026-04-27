@@ -1,3 +1,6 @@
+## v0.9.4 (2026/04/28 JST)
+- Improved movement stability when mounted on a Mount entity
+
 ## v0.9.3 (2026/04/20 JST)
 - Fixed an issue where the game would crash when displaying the tooltip for RecipePaper
 - Fixed an issue where recipes could not be properly registered in RecipePaper

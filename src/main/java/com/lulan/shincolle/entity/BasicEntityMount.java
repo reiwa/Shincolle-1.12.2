@@ -121,9 +121,6 @@ public abstract class BasicEntityMount extends EntityCreature
         if (this.shipDepth > 0.0) spawnMovingParticle();
         if (this.ticksExisted % 32 == 0) {
             this.setStateEmotion(1, this.getPassengers().size() > 1 ? 1 : 0, false);
-            if ((this.ticksExisted & 0x7F) == 0 && this.ticksExisted > 250 && this.host != null) {
-                this.ticksExisted = this.host.ticksExisted;
-            }
         }
     }
 
@@ -183,6 +180,7 @@ public abstract class BasicEntityMount extends EntityCreature
                 this.applyMovement(pitch, yaw);
                 this.rotationYaw = rider.rotationYaw;
                 this.renderYawOffset = rider.renderYawOffset;
+                this.rotationYawHead = rider.rotationYawHead;
             }
         } else if (Math.abs(this.posX - this.prevPosX) > 0.001 || Math.abs(this.posZ - this.prevPosZ) > 0.001) {
             handleAIMovementRotation();
@@ -209,8 +207,50 @@ public abstract class BasicEntityMount extends EntityCreature
     private void applyMovement(float pitch, float yaw) {
         boolean canMoveFreely = onGround || EntityHelper.checkEntityIsInLiquid(this);
         handleJump();
-        handleForwardBackward(pitch, yaw, canMoveFreely);
-        handleLeftRight(yaw, canMoveFreely);
+
+        float forward = 0.0F;
+        float strafe = 0.0F;
+
+        if ((this.keyPressed & KEY_FORWARD) > 0) forward += 1.0F;
+        if ((this.keyPressed & KEY_BACK) > 0) forward -= 1.0F;
+        if ((this.keyPressed & KEY_LEFT) > 0) strafe += 1.0F;
+        if ((this.keyPressed & KEY_RIGHT) > 0) strafe -= 1.0F;
+
+        float distanceSq = forward * forward + strafe * strafe;
+        if (distanceSq > 1.0F) {
+            float distance = MathHelper.sqrt(distanceSq);
+            forward /= distance;
+            strafe /= distance;
+        }
+
+        float movSpeed = getMoveSpeed();
+
+        if (forward != 0.0F || strafe != 0.0F) {
+            float multiplier = canMoveFreely ? 0.25F : 0.03125F;
+
+            float[] moveVec = CalcHelper.rotateXZByAxis(forward * movSpeed, strafe * movSpeed, yaw, 1.0F);
+
+            this.motionX += moveVec[1] * multiplier;
+            this.motionZ += moveVec[0] * multiplier;
+
+            double currentSpeedSq = this.motionX * this.motionX + this.motionZ * this.motionZ;
+            if (currentSpeedSq > (double)(movSpeed * movSpeed)) {
+                double scale = (double)movSpeed / Math.sqrt(currentSpeedSq);
+                this.motionX *= scale;
+                this.motionZ *= scale;
+            }
+        }
+
+        if (canMoveFreely && forward != 0.0F) {
+            float verticalMotion = 0.0F;
+            if (pitch > 1.0F) verticalMotion = -0.1F;
+            if (pitch < -1.0F) verticalMotion = 0.1F;
+
+            if (forward < 0.0F) verticalMotion = -verticalMotion;
+
+            this.motionY = MathHelper.clamp(this.motionY + verticalMotion, -movSpeed * 0.5F, movSpeed * 0.5F);
+        }
+
         if (this.collidedHorizontally) this.motionY += 0.4;
     }
 
@@ -220,38 +260,6 @@ public abstract class BasicEntityMount extends EntityCreature
             if (this.getShipDepth() > 0.0) {
                 this.motionY = Math.min(this.motionY + getMoveSpeed() * 0.1f, 1.0);
             }
-        }
-    }
-
-    private void handleForwardBackward(float pitch, float yaw, boolean canMoveFreely) {
-        float movSpeed = getMoveSpeed();
-        float[] moveVec = CalcHelper.rotateXZByAxis(movSpeed, 0.0f, yaw, 1.0f);
-        float verticalMotion = 0.0f;
-        if (pitch > 1.0f) verticalMotion = -0.1f;
-        if (pitch < -1.0f) verticalMotion = 0.1f;
-        if ((this.keyPressed & KEY_FORWARD) > 0) {
-            this.motionX = MathHelper.clamp(this.motionX + moveVec[1] * 0.25f, -Math.abs(moveVec[1]), Math.abs(moveVec[1]));
-            this.motionZ = MathHelper.clamp(this.motionZ + moveVec[0] * 0.25f, -Math.abs(moveVec[0]), Math.abs(moveVec[0]));
-            if (canMoveFreely) this.motionY = MathHelper.clamp(this.motionY + verticalMotion, -movSpeed * 0.5f, movSpeed * 0.5f);
-        }
-        if ((this.keyPressed & KEY_BACK) > 0) {
-            this.motionX = MathHelper.clamp(this.motionX - moveVec[1] * 0.25f, -Math.abs(moveVec[1]), Math.abs(moveVec[1]));
-            this.motionZ = MathHelper.clamp(this.motionZ - moveVec[0] * 0.25f, -Math.abs(moveVec[0]), Math.abs(moveVec[0]));
-            if (canMoveFreely) this.motionY = MathHelper.clamp(this.motionY - verticalMotion, -movSpeed * 0.5f, movSpeed * 0.5f);
-        }
-    }
-
-    private void handleLeftRight(float yaw, boolean canMoveFreely) {
-        float movSpeed = getMoveSpeed();
-        float[] moveVec = CalcHelper.rotateXZByAxis(0.0f, movSpeed, yaw, 1.0f);
-        float multiplier = canMoveFreely ? 0.25f : 0.03125f;
-        if ((this.keyPressed & KEY_LEFT) > 0) {
-            this.motionX = MathHelper.clamp(this.motionX + moveVec[1] * multiplier, -Math.abs(moveVec[1]), Math.abs(moveVec[1]));
-            this.motionZ = MathHelper.clamp(this.motionZ + moveVec[0] * multiplier, -Math.abs(moveVec[0]), Math.abs(moveVec[0]));
-        }
-        if ((this.keyPressed & KEY_RIGHT) > 0) {
-            this.motionX = MathHelper.clamp(this.motionX - moveVec[1] * multiplier, -Math.abs(moveVec[1]), Math.abs(moveVec[1]));
-            this.motionZ = MathHelper.clamp(this.motionZ - moveVec[0] * multiplier, -Math.abs(moveVec[0]), Math.abs(moveVec[0]));
         }
     }
 
@@ -337,6 +345,12 @@ public abstract class BasicEntityMount extends EntityCreature
         if (!TeamHelper.checkIsBanned(this, player) && this.getDistanceSq(player) < 16.0) {
             player.startRiding(this, true);
             this.stateEmotion = 1;
+
+            if (this.host != null) {
+                this.host.setGuardedPos(-1, -1, -1, 0, 0);
+                this.host.setGuardedEntity(null);
+            }
+
             this.sendSyncPacket(S2CEntitySync.PID.SyncShip_Riders);
             return EnumActionResult.SUCCESS;
         }

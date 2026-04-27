@@ -79,7 +79,7 @@ extends EntityAIBase {
         if (this.ship.getStateFlag(27)) {
             return false;
         }
-        if (!(this.host == null || this.host.getIsRiding() || this.host.getIsSitting() || this.host.getStateFlag(11) || this.host.getStateMinor(43) >= 1 || this.host.getStateMinor(6) <= 0)) {
+        if (!(this.host == null || this.host.getIsRiding() || this.host.getIsSitting() || this.host.getStateFlag(11) || this.host.getStateMinor(43) >= 1 || this.host.getStateMinor(6) <= 0 || !this.host2.getPassengers().isEmpty())) {
             return this.checkGuardTarget();
         }
         return false;
@@ -91,7 +91,7 @@ extends EntityAIBase {
             return false;
         }
         if (this.host != null) {
-            if (!(this.host.getIsRiding() || this.host.getIsSitting() || this.host.getStateFlag(11) || this.host.getStateMinor(43) >= 1 || this.host.getStateMinor(6) <= 0)) {
+            if (!(this.host.getIsRiding() || this.host.getIsSitting() || this.host.getStateFlag(11) || this.host.getStateMinor(43) >= 1 || this.host.getStateMinor(6) <= 0 || !this.host2.getPassengers().isEmpty())) {
                 if (this.distSq > this.minDistSq) {
                     return true;
                 }
@@ -162,7 +162,9 @@ extends EntityAIBase {
                 this.findCooldown = 32;
                 this.isMoving = this.shipnavigator.tryMoveToXYZ(this.pos[0], this.pos[1], this.pos[2], 1.0);
             }
-            this.host2.getLookHelper().setLookPosition(this.pos[0], this.pos[1], this.pos[2], 30.0f, this.host2.getVerticalFaceSpeed());
+            if (this.host2.getControllingPassenger() == null) {
+                this.host2.getLookHelper().setLookPosition(this.pos[0], this.pos[1], this.pos[2], 30.0f, this.host2.getVerticalFaceSpeed());
+            }
             if (this.host2.dimension == this.host.getGuardedPos(3)) {
                 if (!ConfigHandler.canTeleport) {
                     return;

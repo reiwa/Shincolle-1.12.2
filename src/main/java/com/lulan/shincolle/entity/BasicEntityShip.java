@@ -1302,7 +1302,7 @@ public abstract class BasicEntityShip extends EntityTameable implements IShipCan
 
     private void handleServerTicks64() {
         this.updateEmotionState();
-        if (this.isRiding() && !this.isMorph) {
+        if (this.isRiding() && !this.isMorph && !(this.getRidingEntity() instanceof BasicEntityMount)) {
             this.sendSyncPacketRiders();
         }
         if ((this.ticksExisted & 0x7F) == 0) {
@@ -1910,7 +1910,7 @@ public abstract class BasicEntityShip extends EntityTameable implements IShipCan
                 this.world.spawnEntity(mount);
                 this.getPassengers().forEach(Entity::dismountRidingEntity);
                 this.startRiding(mount, true);
-                mount.sendSyncPacket((byte) 0);
+                mount.sendSyncPacket(S2CEntitySync.PID.SyncShip_Riders);
             }
         }
     }

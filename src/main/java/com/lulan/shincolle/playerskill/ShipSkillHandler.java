@@ -66,14 +66,21 @@ public class ShipSkillHandler {
                 ClientProxy.isViewPlayer = !ClientProxy.isViewPlayer;
                 return;
             }
-            int newKeys = getMoveKeys(keySet, mount.onGround || EntityHelper.checkEntityIsInLiquid(mount));
-            if (newKeys > 0) {
-                ClientProxy.rideKeys = newKeys;
-                ClientProxy.keyMountActionCD = 2;
-                mount.keyPressed = newKeys;
-                mount.keyTick = 10;
-                CommonProxy.channelI.sendToServer(new C2SInputPackets((byte) 0, newKeys));
-            }
+        }
+
+        int newKeys = getMoveKeys(keySet, mount.onGround || EntityHelper.checkEntityIsInLiquid(mount));
+
+        mount.keyPressed = newKeys;
+        if (newKeys > 0) {
+            mount.keyTick = 10;
+        }
+
+        boolean stateChanged = newKeys != ClientProxy.rideKeys;
+        boolean keepAlive = newKeys > 0 && mount.ticksExisted % 8 == 0;
+
+        if (stateChanged || keepAlive) {
+            ClientProxy.rideKeys = newKeys;
+            CommonProxy.channelI.sendToServer(new C2SInputPackets((byte) 0, newKeys));
         }
         BasicEntityShip ship = (BasicEntityShip) mount.getHostEntity();
         if (ship == null) return;

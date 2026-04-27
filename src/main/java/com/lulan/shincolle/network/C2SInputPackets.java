@@ -118,6 +118,11 @@ implements IMessage {
                     if (ship != null && TeamHelper.checkSameOwner(player, ship)) {
                         mount.keyPressed = msg.value3[0];
                         mount.keyTick = 10;
+
+                        if (msg.value3[0] > 0) {
+                            ship.setGuardedPos(-1, -1, -1, 0, 0);
+                            ship.setGuardedEntity(null);
+                        }
                     }
                     break;
                 }
