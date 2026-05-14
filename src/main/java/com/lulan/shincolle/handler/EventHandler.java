@@ -6,6 +6,7 @@ import com.lulan.shincolle.entity.*;
 import com.lulan.shincolle.init.ModItems;
 import com.lulan.shincolle.intermod.MetamorphHelper;
 import com.lulan.shincolle.item.BasicEquip;
+import com.lulan.shincolle.item.PointerItem;
 import com.lulan.shincolle.network.S2CEntitySync;
 import com.lulan.shincolle.network.S2CGUIPackets;
 import com.lulan.shincolle.playerskill.ShipSkillHandler;
@@ -51,6 +52,7 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
@@ -586,5 +588,13 @@ public class EventHandler {
         int mouseX = Mouse.getEventX() * sr.getScaledWidth()  / mc.displayWidth;
         int mouseY = sr.getScaledHeight() - Mouse.getEventY() * sr.getScaledHeight() / mc.displayHeight - 1;
         this.guiAppearance.mouseClicked(gui, mouseX, mouseY, Mouse.getEventButton(), player);
+    }
+
+    @SubscribeEvent
+        public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        ItemStack stack = event.getItemStack();
+        if (!stack.isEmpty() && stack.getItem() instanceof PointerItem) {
+            event.setCanceled(true);
+        }
     }
 }

@@ -26,6 +26,7 @@ import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
@@ -131,6 +132,14 @@ IShipMorph {
             NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 64.0);
             CommonProxy.channelE.sendToAllAround(new S2CEntitySync(this, pid), point);
         }
+    }
+
+    @Override
+    public String getName() {
+        if (this.hasCustomName()) {
+            return this.getCustomNameTag();
+        }
+        return I18n.translateToLocal("entity.shincolle:" + this.getClass().getSimpleName() + ".name");
     }
 
     public void onUpdate() {

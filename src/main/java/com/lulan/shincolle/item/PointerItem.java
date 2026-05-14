@@ -138,6 +138,8 @@ public class PointerItem extends BasicItem {
     }
 
     private boolean handleSwingOnMiss(EntityPlayer player, ItemStack stack) {
+        if (hasCustomCooldown(player, 5)) return true;
+
         GameSettings keySet = ClientProxy.getGameSetting();
         boolean isSneaking = keySet.keyBindSneak.isKeyDown();
         boolean isSprinting = keySet.keyBindSprint.isKeyDown();
@@ -145,6 +147,7 @@ public class PointerItem extends BasicItem {
 
         if (isSneaking && isSprinting) {
             CommonProxy.channelG.sendToServer(new C2SGUIPackets(player, (byte) 26, 0));
+            setCustomCooldown(player);
         } else if (isSneaking) {
             int newMeta;
             switch (meta) {
@@ -154,11 +157,12 @@ public class PointerItem extends BasicItem {
             }
             stack.setItemDamage(newMeta);
             CommonProxy.channelG.sendToServer(new C2SGUIPackets(player, (byte) 24, newMeta));
+            setCustomCooldown(player);
         } else if (isSprinting && meta == 2) {
             this.formatFlag = true;
             this.formatAddID++;
             this.formatCD = 20;
-            return false;
+            return true;
         }
         return true;
     }
@@ -166,8 +170,15 @@ public class PointerItem extends BasicItem {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        if (stack.getMetadata() > 2 || !world.isRemote) {
+        int meta = stack.getMetadata();
+
+        if (meta > 2 || !world.isRemote) {
             return new ActionResult<>(EnumActionResult.PASS, stack);
+        }
+
+        if (ClientProxy.getGameSetting().keyBindSneak.isKeyDown() && (meta == 1 || meta == 2)) {
+            CommonProxy.channelG.sendToServer(new C2SGUIPackets(player, (byte) 32, 0));
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         List<Entity> excludeList = new ArrayList<>();
         excludeList.add(player);
@@ -380,5 +391,14 @@ public class PointerItem extends BasicItem {
                 displayedCount++;
             }
         }
+    }
+
+    private boolean hasCustomCooldown(EntityPlayer player, int cooldownTicks) {
+        long lastUse = player.getEntityData().getLong("PointerLastUseTime");
+        return (player.world.getTotalWorldTime() - lastUse) < cooldownTicks;
+    }
+
+    private void setCustomCooldown(EntityPlayer player) {
+        player.getEntityData().setLong("PointerLastUseTime", player.world.getTotalWorldTime());
     }
 }

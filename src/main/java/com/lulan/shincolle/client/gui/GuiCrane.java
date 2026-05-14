@@ -202,7 +202,7 @@ extends GuiContainer {
             str = CalcHelper.getTimeFormated((int) ( this.tile.getShip().getStateTimer(1) * 0.05f));
             len = (int)(this.fontRenderer.getStringWidth(str) * 0.5f);
             this.fontRenderer.drawString(str, 133 - len, 10, Enums.EnumColors.GRAY_DARK.getValue());
-            str = this.tile.getShip().getCustomNameTag() != null && !this.tile.getShip().getCustomNameTag().isEmpty() ? this.tile.getShip().getCustomNameTag() : I18n.format("entity.shincolle." + this.tile.getShip().getClass().getSimpleName() + ".name");
+            str = this.tile.getShip().getName();
             this.fontRenderer.drawStringWithShadow(str, 80.0f, 24.0f, Enums.EnumColors.WHITE.getValue());
         }
         this.handleHoveringText();

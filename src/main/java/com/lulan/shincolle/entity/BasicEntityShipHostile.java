@@ -34,6 +34,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BossInfoServer;
@@ -114,6 +115,11 @@ IShipMorph {
 
     public boolean isBurning() {
         return this.getStateEmotion(3) == 3;
+    }
+
+    @Override
+    public String getName() {
+        return I18n.translateToLocal("entity.shincolle:" + this.getClass().getSimpleName() + ".name");
     }
 
     @Override

@@ -50,6 +50,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
@@ -163,6 +164,14 @@ public abstract class BasicEntityShip extends EntityTameable implements IShipCan
     @Override
     public float getEyeHeight() {
         return this.height * 0.8f;
+    }
+
+    @Override
+    public String getName() {
+        if (this.hasCustomName()) {
+            return this.getCustomNameTag();
+        }
+        return I18n.translateToLocal("entity.shincolle:" + this.getClass().getSimpleName() + ".name");
     }
 
     protected void postInit() {
