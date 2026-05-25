@@ -1,3 +1,6 @@
+## v0.9.6 (2026/05/25 JST)
+- Fixed OPTool's keybind function
+
 ## v0.9.5 (2026/05/14 JST)
 - Improved usability of pointer items
 - Fixed an issue related to the display names of Shinkaiseikan and Ship Girls

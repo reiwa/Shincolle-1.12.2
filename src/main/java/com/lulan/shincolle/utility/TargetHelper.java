@@ -108,7 +108,7 @@ public class TargetHelper {
         EntityPlayer player = ClientProxy.getClientPlayer();
         ItemStack optool = player.inventory.getCurrentItem();
         if (optool.isEmpty() || optool.getItem() != ModItems.OPTool) return;
-        if (Keyboard.isKeyDown(Keyboard.KEY_NUMPAD7)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_NUMPAD1)) {
             ClientProxy.debugCooldown = 5;
             RayTraceResult hitObj = EntityHelper.getMouseOverEntity(ClientProxy.getMineraft().getRenderViewEntity(), 32.0, 1.0f, null, false, false);
             if (hitObj != null && hitObj.entityHit != null && !(hitObj.entityHit instanceof BasicEntityShip)) {
@@ -116,7 +116,7 @@ public class TargetHelper {
                 LogHelper.debug("DEBUG: target wrench get class: " + tarName);
                 CommonProxy.channelG.sendToServer(new C2SGUIPackets(player, (byte) 50, tarName));
             }
-        } else if (Keyboard.isKeyDown(Keyboard.KEY_NUMPAD8)) {
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_NUMPAD2)) {
             ClientProxy.debugCooldown = 20;
             CommonProxy.channelG.sendToServer(new C2SGUIPackets(player, (byte) 51));
         }
