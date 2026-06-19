@@ -1,3 +1,6 @@
+## v0.9.7 (2026/06/19 JST)
+- Fixed BlockFrame's ladder function not working properly
+
 ## v0.9.6 (2026/05/25 JST)
 - Fixed OPTool's keybind function
 

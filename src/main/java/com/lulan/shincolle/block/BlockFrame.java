@@ -20,6 +20,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
+import net.minecraft.util.math.AxisAlignedBB;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -87,6 +89,13 @@ public class BlockFrame extends BasicBlock {
 
     public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
         return true;
+    }
+
+    @Deprecated
+    @Override
+    @Nullable
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        return new AxisAlignedBB(0.01D, 0.0D, 0.01D, 0.99D, 1.0D, 0.99D);
     }
 
     public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
